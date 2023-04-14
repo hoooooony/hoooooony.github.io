@@ -17,6 +17,11 @@
       .signup-link {
         color: azure;
       }
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
     </style>
   </head>
   <body>
@@ -37,7 +42,7 @@
     </nav>
     <div class="container mt-5">
       <h1>회원가입</h1>
-      <form>
+      <form onsubmit="return false;">
         <div class="form-group">
           <label for="id">ID</label>
           <input
@@ -45,7 +50,9 @@
             class="form-control"
             id="id"
             placeholder="ID를 입력하세요"
+            onblur="emailCheck()"
           />
+          <div id="email-check">###@##.com형식을 지켜주세요</div>
         </div>
         <div class="form-group">
           <label for="pw">Password</label>
@@ -63,7 +70,9 @@
             class="form-control"
             id="pw-check"
             placeholder="비밀번호를 다시 입력하세요"
+            onblur="pwCheck()"
           />
+          <div id="pw-check-box">동일한 비밀번호를 작성해주세요.</div>
         </div>
         <div class="form-group">
           <label for="student-number">학번</label>
@@ -72,18 +81,23 @@
             class="form-control"
             id="student-number"
             placeholder="학번을 입력하세요"
+            onchange="selectOption()"
           />
+          <div id="student-number-check">학번은 10자리입니다.</div>
         </div>
         <div class="form-group">
           <label for="maior">전공</label>
           <select class="form-control" id="maior">
-            <option>전공을 선택하세요</option>
-            <option>컴퓨터공학부</option>
-            <option>전자공학과</option>
-            <option>건축공학과</option>
-            <option>디자인공학과</option>
-            <option>기계공학부</option>
-            <option>응용화학공학부</option>
+            <option value="0">전공을 선택하세요</option>
+            <option value="1">기계공학부</option>
+            <option value="2">산업경영학부</option>
+            <option value="3">컴퓨터공학부</option>
+            <option value="4">메카트로닉스공학부</option>
+            <option value="5">고용서비스정책학과</option>
+            <option value="6">디자인공학부</option>
+            <option value="7">에너지신소재화학공학부</option>
+            <option value="8">전기전자통신공학부</option>
+            <option value="9">건축공학부</option>
           </select>
         </div>
         <div class="form-group">
@@ -93,7 +107,9 @@
             class="form-control"
             id="phone-number"
             placeholder="전화번호를 입력하세요"
+            onchange="changePhoneNumber()"
           />
+          <div id="Phone-number-check">숫자만 입력하시오</div>
         </div>
         <button type="submit" class="btn btn-primary">회원가입</button>
         <button type="reset" class="btn btn-dark">취소</button>
@@ -109,5 +125,129 @@
       integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
       crossorigin="anonymous"
     ></script>
+    <script>
+      const $emailcheckbox = document.getElementById("email-check");
+      const $pwCheckBox = document.getElementById("pw-check-box");
+      const $studentId = document.getElementById("student-number");
+      const $maiorSelect = document.getElementById("maior");
+      const $studentNumberCheck = document.getElementById(
+        "student-number-check"
+      );
+
+      let email =
+        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+
+      function emailCheck() {
+        const emailInput = document.getElementById("id");
+        if (emailInput.value.match(email)) {
+          $emailcheckbox.innerText = "올바른 이메일 입력";
+          $emailcheckbox.style.color = "black";
+        } else {
+          $emailcheckbox.innerText = "틀린 이메일 형식";
+          $emailcheckbox.style.color = "red";
+        }
+      }
+
+      function pwCheck() {
+        const pwInput = document.getElementById("pw");
+        const pwCheckInput = document.getElementById("pw-check");
+        console.log(pwInput.value, pwCheckInput.value);
+        if (pwInput.value === pwCheckInput.value) {
+          $pwCheckBox.innerText = "동일 비밀번호 입력";
+          $pwCheckBox.style.color = "black";
+        } else {
+          $pwCheckBox.innerText = "다른 비밀번호 입력";
+          $pwCheckBox.style.color = "red";
+        }
+      }
+
+      function selectOption() {
+        let studentIdText = $studentId.value.toString();
+        if (checkStudentId(studentIdText)) {
+          let maiorNumber = studentIdText.substr(5, 2);
+          switch (maiorNumber) {
+            case "20":
+              $maiorSelect.value = "1";
+              break;
+            case "80":
+              $maiorSelect.value = "2";
+              break;
+            case "35":
+            case "36":
+              console.log(maiorNumber);
+              $maiorSelect.value = "3";
+              break;
+            case "40":
+              $maiorSelect.value = "4";
+              break;
+            case "85":
+              $maiorSelect.value = "5";
+              break;
+            case "51":
+              $maiorSelect.value = "6";
+              break;
+            case "74":
+              $maiorSelect.value = "7";
+              break;
+            case "61":
+              $maiorSelect.value = "8";
+              break;
+            case "72":
+              $maiorSelect.value = "9";
+              break;
+            default:
+              $maiorSelect.value = "0";
+          }
+        }
+      }
+
+      function checkStudentId(studentIdText) {
+        if (studentIdText.length != 10) {
+          $studentNumberCheck.innerText = "올바르지 못한 형식";
+          return false;
+        } else {
+          $studentNumberCheck.innerText = "올바른 형식";
+          return true;
+        }
+      }
+
+      function changePhoneNumber() {
+        const $PhoneNumber = document.getElementById("phone-number");
+        let check = /\d/;
+        const $PhoneNumberCheck = document.getElementById("Phone-number-check");
+        if ($PhoneNumber.value.match(check)) {
+          $PhoneNumberCheck.innerText = "올바른 형식";
+          $PhoneNumberCheck.style.color = "black";
+          if ($PhoneNumber.value.substr(0, 3) == "010") {
+            $PhoneNumber.value = `${$PhoneNumber.value.substr(
+              0,
+              3
+            )} - ${$PhoneNumber.value.substr(
+              3,
+              4
+            )} - ${$PhoneNumber.value.substr(7, 4)}`;
+          } else if ($PhoneNumber.value.substr(0, 2) == "02") {
+            $PhoneNumber.value = `${$PhoneNumber.value.substr(
+              0,
+              2
+            )} - ${$PhoneNumber.value.substr(
+              2,
+              4
+            )} - ${$PhoneNumber.value.substr(6, 4)}`;
+          } else {
+            $PhoneNumber.value = `${$PhoneNumber.value.substr(
+              0,
+              3
+            )} - ${$PhoneNumber.value.substr(
+              3,
+              3
+            )} - ${$PhoneNumber.value.substr(6, 4)}`;
+          }
+        } else {
+          $PhoneNumberCheck.innerText = "잘못된 형식 숫자로 입력하시오.";
+          $PhoneNumberCheck.style.color = "red";
+        }
+      }
+    </script>
   </body>
 </html>
