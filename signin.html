@@ -20,6 +20,16 @@
       .signup-link {
         color: azure;
       }
+      img {
+        width: 400px;
+        height: auto;
+        border-radius: 10px;
+      }
+      #get-cat {
+        margin-top: 5px;
+        border-radius: 10px;
+        border: 0;
+      }
     </style>
   </head>
   <body>
@@ -61,9 +71,8 @@
         </div>
         <button type="submit" class="btn btn-primary">로그인</button>
       </form>
-      <img
-        src="https://drive.google.com/file/d/152JzucfGD-7l5ZTkALoUERLsUoQ1_KAS/view?usp=share_link"
-      />
+      <button id="get-cat" onclick="getCat()">고양이 불러오기</button>
+      <img id="cat-img" src="loading.gif" />
     </div>
     <script
       src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
@@ -76,5 +85,20 @@
       crossorigin="anonymous"
     ></script>
     <script src="signin.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script>
+      const $catImgElement = document.getElementById("cat-img");
+      function getCat() {
+        axios({
+          method: "get",
+          url: "https://api.thecatapi.com/v1/images/search?size=full",
+          responseType: "json",
+        }).then(function (response) {
+          let imgURL = response.data[0].url;
+          $catImgElement.src = imgURL;
+        });
+      }
+    </script>
   </body>
 </html>
