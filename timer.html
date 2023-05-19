@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #btn-container {
+        margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 60px;
+      }
+      #time {
+        font-size: 40px;
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #start-delay {
+        margin-top: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="btn-container">
+      <button id="stop-btn">스탑워치</button>
+      <button id="timer-btn">타이머</button>
+    </div>
+    <div id="time">00 : 00</div>
+    <div id="start-delay">
+      <button id="start">시작</button>
+      <button id="delay-five">5초 대기</button>
+    </div>
+    <script>
+      const $stateStartBtn = document.getElementById("start");
+      const $stateDiv = document.getElementById("time");
+      const $delayFiveSec = document.getElementById("delay-five");
+      let seconds = 0;
+      let minutes = 0;
+      let timer;
+      let timeoutId;
+      $stateStartBtn.addEventListener("click", startTimer);
+      $delayFiveSec.addEventListener("click", delayFiveSec);
+      function startTimer() {
+        if ($stateStartBtn.innerText === "시작") {
+          resetTimer();
+          $stateStartBtn.removeEventListener("click", startTimer);
+          $stateStartBtn.addEventListener("click", stop);
+          timer = setInterval(incrementTime, 1000);
+          $stateStartBtn.innerText = "정지";
+        } else {
+          stop();
+        }
+      }
+      function stop() {
+        clearInterval(timer);
+        timer = null;
+        $stateStartBtn.textContent = "시작";
+        $stateStartBtn.removeEventListener("click", stop);
+        $stateStartBtn.addEventListener("click", startTimer);
+      }
+      function resetTimer() {
+        seconds = 0;
+        minutes = 0;
+        const timeText = "00 : 00";
+        $stateDiv.textContent = timeText;
+      }
+      async function incrementTime() {
+        await delay(1000);
+
+        seconds++;
+
+        if (seconds === 60) {
+          seconds = 0;
+          minutes++;
+        }
+
+        const timeText = `${minutes < 10 ? "0" + minutes : minutes} : ${
+          seconds < 10 ? "0" + seconds : seconds
+        }`;
+        $stateDiv.textContent = timeText;
+      }
+
+      function delay(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      async function waitFiveSec() {
+        return new Promise((resolve, reject) => {
+          timeoutId = setTimeout(() => {
+            resolve(true);
+          }, 5000);
+        });
+      }
+
+      async function delayFiveSec() {
+        stop();
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }
+
+        try {
+          await waitFiveSec();
+          console.log("5초 대기 완료");
+          timer = setInterval(incrementTime, 1000);
+        } catch (error) {
+          console.log("대기 중 오류 발생");
+        }
+      }
+    </script>
+  </body>
+</html>
